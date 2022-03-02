@@ -5,7 +5,7 @@ import sqlite3
 
 with open('token.ini', 'r') as file:
     BOT_TOKEN = file.read()
-db_file = 'C:/Users/Jacky/Repo/HW0228-Telegram-Bot/content.db'
+db_file = 'C:/Users/Jacky/Repo/Survey-Telegram-Bot/content.db'
 
 CONSENT, NAME, GENDER, AGE, SCHOOL, FAV, HATE, CONTROL1, CONTROL2, CONTROL3, FAV1, FAV2, FAV3, HATE1, HATE2, HATE3 = range(16)
 tests = ['https://10fastfingers.com', 'https://arithmetic.zetamac.com/game?key=5cccbe99', 'https://timodenk.com/blog/digit-span-test-online-tool/']
@@ -38,6 +38,7 @@ Before we begin, do you allow us to use the data that we will be collecting from
 
 
 def consent_handler(update: Update, context):
+    user_data[CONSENT] = update.message.text
     update.message.reply_text(
         'We are glad you are able to help us do this experiment! Can we get your name please?',
         reply_markup=ReplyKeyboardRemove(),
@@ -188,9 +189,28 @@ def cancel_handler(update: Update, context):
 
 
 def update_db():
-    conn = sqlite3.connect(db_file)
+    conn = sqlite3.connect('content.sqlite')
     cur = conn.cursor()
-    cur.execute("INSERT INTO userdata VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)", [user_data[0], user_data[1], user_data[2], user_data[3], user_data[4], user_data[5], user_data[6], user_data[7], user_data[8], user_data[9], user_data[10], user_data[11], user_data[12], user_data[13], user_data[14], user_data[15]])
+    cur.executescript('''CREATE TABLE IF NOT EXISTS userdata
+    (
+    CONSENT TEXT, 
+    NAME TEXT, 
+    GENDER TEXT,
+    AGE TEXT,
+    SCHOOL TEXT,
+    FAV TEXT,
+    HATE TEXT,
+    CONTROL1 TEXT,
+    CONTROL2 TEXT,
+    CONTROL3 TEXT,
+    FAV1 TEXT,
+    FAV2 TEXT,
+    FAV3 TEXT,
+    HATE1 TEXT,
+    HATE2 TEXT,
+    HATE3 TEXT);'''
+    )
+    cur.execute('INSERT INTO userdata VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)', (user_data[0], user_data[1], user_data[2], user_data[3], user_data[4], user_data[5], user_data[6], user_data[7], user_data[8], user_data[9], user_data[10], user_data[11], user_data[12], user_data[13], user_data[14], user_data[15]))
     print('Db updated!')
     conn.commit()
     
