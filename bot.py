@@ -5,13 +5,22 @@ import sqlite3
 
 with open('token.ini', 'r') as file:
     BOT_TOKEN = file.read()
-db_file = 'C:/Users/Jacky/Repo/HW0228-Telegram-Bot/content.sqlite'
-
+db_file = 'C:/Users/Jacky/Repo/HW0228-Telegram-Bot/content.db'
 
 CONSENT, NAME, GENDER, AGE, SCHOOL, FAV, HATE, CONTROL1, CONTROL2, CONTROL3, FAV1, FAV2, FAV3, HATE1, HATE2, HATE3 = range(16)
-test1 = 'https://10fastfingers.com'
-test2 = 'https://www.mathsisfun.com'
-test3 = 'https://www.memorylosstest.com/digit-span/'
+tests = ['https://10fastfingers.com', 'https://arithmetic.zetamac.com/game?key=5cccbe99', 'https://timodenk.com/blog/digit-span-test-online-tool/']
+genre = ['Lo-fi', 'Classical', 'Pop', 'Blues', 'Jazz', 'Hip-Pop', 'Rock', 'Heavy Metal', 'Electronic Dance Music']
+music = ['https://youtu.be/mT6c8tcv75Y', # Lo-fi
+'https://youtu.be/RzEr66WYcm8', # Classical
+'https://youtu.be/h_NiEKQauOM', # Pop
+'https://youtu.be/SH3KlDlqu_k', # Blues
+'https://youtu.be/o26qoCYLdS8', # Jazz
+'https://youtu.be/OQLPUPC8pUM', # Hip-Pop
+'https://youtu.be/26nsBfLXwSQ', # Rock
+'https://youtu.be/Lmp2zJ7UNPM', # Heavy Metal
+'https://youtu.be/1MHh6ykSlm8', # Electronic Dance Music
+] 
+
 user_data = {}
 
 
@@ -63,31 +72,37 @@ def age_handler(update: Update, context):
 
 def school_handler(update: Update, context):
     user_data[SCHOOL] = update.message.text
-    update.message.reply_text('''genres of music:
-1. rock
-2. a
-3. b
-4. c
-5. d
-6. e
-7. 
-8.
-9.
+    reply_keyboard = [['1', '2', '3', '4', '5', '6', '7', '8', '9']]
+    update.message.reply_text(f'''genres of music:
+1. {genre[0]}
+2. {genre[1]}
+3. {genre[2]}
+4. {genre[3]}
+5. {genre[4]}
+6. {genre[5]}
+7. {genre[6]}
+8. {genre[7]}
+9. {genre[8]}
     ''')
-    update.message.reply_text('please choose your fav genre (num)')
+    update.message.reply_text('please choose your fav genre (num)',
+    reply_markup=ReplyKeyboardMarkup(reply_keyboard, one_time_keyboard=True, input_field_placeholder='Select a number between 1 and 9')
+    )
     return FAV
 
 
 def fav_handler(update: Update, context):
     user_data[FAV] = update.message.text
-    update.message.reply_text('wlease choose your least fav genre (num)')
+    reply_keyboard = [['1', '2', '3', '4', '5', '6', '7', '8', '9']]
+    update.message.reply_text('please choose your least fav genre (num)',
+    reply_markup=ReplyKeyboardMarkup(reply_keyboard, one_time_keyboard=True, input_field_placeholder='Select a number between 1 and 9')
+    )
     return HATE
 
 
 def hate_handler(update: Update, context):
     user_data[HATE] = update.message.text
-    update.message.reply_text('we will now start with the control experiment. no music. typing')
-    update.message.reply_text('use this link: ' + test1)
+    update.message.reply_text('we will now start with the control experiment. no music. typing', reply_markup=ReplyKeyboardRemove(),)
+    update.message.reply_text('use this link: ' + tests[0])
     update.message.reply_text('once done, please reply your wpm')
     return CONTROL1
 
@@ -95,7 +110,7 @@ def hate_handler(update: Update, context):
 def control1_handler(update: Update, context):
     user_data[CONTROL1] = update.message.text
     update.message.reply_text('we will now start with the control experiment. no music. math')
-    update.message.reply_text('use this link: ' + test2)
+    update.message.reply_text('use this link: ' + tests[1])
     update.message.reply_text('once done, please reply your math score')
     return CONTROL2
 
@@ -103,7 +118,7 @@ def control1_handler(update: Update, context):
 def control2_handler(update: Update, context):
     user_data[CONTROL2] = update.message.text
     update.message.reply_text('we will now start with the control experiment. no music. memory')
-    update.message.reply_text('use this link: ' + test3)
+    update.message.reply_text('use this link: ' + tests[2])
     update.message.reply_text('once done, please reply your memory score')
     return CONTROL3
 
@@ -111,23 +126,24 @@ def control2_handler(update: Update, context):
 def control3_handler(update: Update, context):
     user_data[CONTROL3] = update.message.text
     update.message.reply_text('we will now start with the fav experiment. fav music. typing')
-    update.message.reply_text('use this link: ' + test1)
+    update.message.reply_text('use this link: ' + tests[0])
+    update.message.reply_text('music vid: ' + music[int(user_data[FAV])-1])
     update.message.reply_text('once done, please reply your wpm')
     return FAV1
 
 
 def fav1_handler(update: Update, context):
     user_data[FAV1] = update.message.text
-    update.message.reply_text('we will now start with the control experiment. no music. math')
-    update.message.reply_text('use this link: ' + test2)
+    update.message.reply_text('we will now start with the fav experiment. fav music. math')
+    update.message.reply_text('use this link: ' + tests[1])
     update.message.reply_text('once done, please reply your math score')
     return FAV2
 
 
 def fav2_handler(update: Update, context):
     user_data[FAV2] = update.message.text
-    update.message.reply_text('we will now start with the control experiment. no music. memory')
-    update.message.reply_text('use this link: ' + test3)
+    update.message.reply_text('we will now start with the fav experiment. fav music. memory')
+    update.message.reply_text('use this link: ' + tests[2])
     update.message.reply_text('once done, please reply your memory score')
     return FAV3
 
@@ -135,7 +151,8 @@ def fav2_handler(update: Update, context):
 def fav3_handler(update: Update, context):
     user_data[FAV3] = update.message.text
     update.message.reply_text('we will now start with the hate experiment. hate music. typing')
-    update.message.reply_text('use this link: ' + test1)
+    update.message.reply_text('use this link: ' + tests[0])
+    update.message.reply_text('music vid: ' + music[int(user_data[HATE])-1])
     update.message.reply_text('once done, please reply your wpm')
     return HATE1
 
@@ -143,7 +160,7 @@ def fav3_handler(update: Update, context):
 def hate1_handler(update: Update, context):
     user_data[HATE1] = update.message.text
     update.message.reply_text('we will now start with the hate experiment. hate music. math')
-    update.message.reply_text('use this link: ' + test2)
+    update.message.reply_text('use this link: ' + tests[1])
     update.message.reply_text('once done, please reply your math score')
     return HATE2
 
@@ -151,7 +168,7 @@ def hate1_handler(update: Update, context):
 def hate2_handler(update: Update, context):
     user_data[HATE2] = update.message.text
     update.message.reply_text('we will now start with the hate experiment. hate music. memory')
-    update.message.reply_text('use this link: ' + test3)
+    update.message.reply_text('use this link: ' + tests[2])
     update.message.reply_text('once done, please reply your memory score')
     return HATE3
 
@@ -159,7 +176,7 @@ def hate2_handler(update: Update, context):
 def hate3_handler(update: Update, context):
     user_data[HATE3] = update.message.text
     update.message.reply_text('Thank you so much for your time. we have come to the end of our experiment. have a nice day!')
-    #update_db()
+    update_db()
     return ConversationHandler.END
 
 
@@ -173,12 +190,14 @@ def cancel_handler(update: Update, context):
 def update_db():
     conn = sqlite3.connect(db_file)
     cur = conn.cursor()
-    cur.execute("INSERT INTO userdata(Name,Gender,Location) VALUES(?,?,?)", [user_data[0], user_data[1], user_data[2]])
+    cur.execute("INSERT INTO userdata VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)", [user_data[0], user_data[1], user_data[2], user_data[3], user_data[4], user_data[5], user_data[6], user_data[7], user_data[8], user_data[9], user_data[10], user_data[11], user_data[12], user_data[13], user_data[14], user_data[15]])
     print('Db updated!')
     conn.commit()
     
 
 def main():
+
+
     updater = Updater(token=BOT_TOKEN)
 
     dp = updater.dispatcher
@@ -186,13 +205,13 @@ def main():
     conv_handler = ConversationHandler(
         entry_points=[CommandHandler('start', start_handler)],
         states={
-            CONSENT: [MessageHandler(Filters.regex('^(Yes)$'), consent_handler), MessageHandler(Filters.regex('^(No)$'), no_consent_handler)],
+            CONSENT: [MessageHandler(Filters.regex('^(Yes|yes)$'), consent_handler), MessageHandler(Filters.regex('^(No|no)$'), no_consent_handler)],
             NAME: [MessageHandler(Filters.text, name_handler)],
             GENDER: [MessageHandler(Filters.text, gender_handler)],
-            AGE: [MessageHandler(Filters.text, age_handler)],
+            AGE: [MessageHandler(Filters.regex('^[0-9]'), age_handler)],
             SCHOOL: [MessageHandler(Filters.text, school_handler)],
-            FAV: [MessageHandler(Filters.text, fav_handler)],
-            HATE: [MessageHandler(Filters.text, hate_handler)],
+            FAV: [MessageHandler(Filters.regex('^[0-9]'), fav_handler)],
+            HATE: [MessageHandler(Filters.regex('^[0-9]'), hate_handler)],
             CONTROL1: [MessageHandler(Filters.text, control1_handler)],
             CONTROL2: [MessageHandler(Filters.text, control2_handler)],
             CONTROL3: [MessageHandler(Filters.text, control3_handler)],
