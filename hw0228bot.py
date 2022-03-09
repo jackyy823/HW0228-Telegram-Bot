@@ -5,7 +5,6 @@ import sqlite3
 
 with open('token.ini', 'r') as file:
     BOT_TOKEN = file.read()
-db_file = 'C:/Users/Jacky/Repo/Survey-Telegram-Bot/content.db'
 
 CONSENT, ENVIRONMENT, NAME, GENDER, AGE, SCHOOL, Q1, Q2, Q3, Q4, FAV, HATE, CONTROL1, CONTROL2, CONTROL3, FAV1, FAV2, FAV3, HATE1, HATE2, HATE3 = range(21)
 tests = ['https://tinyurl.com/hw0228customtyping', 'https://arithmetic.zetamac.com/game?key=5709eab0', 'https://timodenk.com/blog/digit-span-test-online-tool/']
